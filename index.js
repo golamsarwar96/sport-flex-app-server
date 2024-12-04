@@ -28,6 +28,17 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
 
     const userCollection = client.db("sportflexDB").collection("users");
+    const equipmentCollection = client
+      .db("sportflexDB")
+      .collection("equipments");
+
+    //Equipment Related API's
+    //Equipment POST Method
+    app.post("/equipments", async (req, res) => {
+      const newEquipment = req.body;
+      const result = await equipmentCollection.insertOne(newEquipment);
+      res.send(result);
+    });
 
     //User related API's
     app.post("/users", async (req, res) => {
@@ -35,6 +46,19 @@ async function run() {
       console.log("Creating new user:", newUser);
       const result = await userCollection.insertOne(newUser);
       res.send(result);
+    });
+
+    //Updating the latest sign in time
+    app.patch("/users", async (req, res) => {
+      const email = req.body?.email;
+      const filter = { email };
+      const updatedDoc = {
+        $set: {
+          lastSignInTime: req.body?.lastSignInTime,
+        },
+      };
+
+      const result = await userCollection.updateOne(filter, updatedDoc);
     });
 
     console.log(
