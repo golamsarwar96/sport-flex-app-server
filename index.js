@@ -26,6 +26,17 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
+
+    const userCollection = client.db("sportflexDB").collection("users");
+
+    //User related API's
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      console.log("Creating new user:", newUser);
+      const result = await userCollection.insertOne(newUser);
+      res.send(result);
+    });
+
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
