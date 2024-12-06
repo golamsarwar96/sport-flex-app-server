@@ -8,7 +8,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.i16dm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -38,6 +38,38 @@ async function run() {
       const newEquipment = req.body;
       const result = await equipmentCollection.insertOne(newEquipment);
       res.send(result);
+    });
+
+    //Equipment GET Method
+    app.get("/equipments", async (req, res) => {
+      const cursor = equipmentCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    //Update a specific equipment
+    app.get("/equipments/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await equipmentCollection.findOne(query);
+      res.send(result);
+    });
+
+    //Delete Equipment
+    app.delete("/equipments/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await equipmentCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    //Only 6 data
+    app.get("/equipments/limited", async (req, res) => {
+      const equipmentCollection = client
+        .db("sportflexDB")
+        .collection("equipments");
+      const limitedData = await equipmentCollection.find({}).limit(6).toArray();
+      res.send(limitedData);
     });
 
     //User related API's
