@@ -47,13 +47,6 @@ async function run() {
       res.send(result);
     });
 
-    //sorted
-    app.get("/sortedequipments", async (req, res) => {
-      const cursor = equipmentCollection.find().sort({ price: -1 });
-      const result = await cursor.toArray();
-      res.send(result);
-    });
-
     //PUT method
     app.put("/equipments/:id", async (req, res) => {
       const id = req.params.id;
