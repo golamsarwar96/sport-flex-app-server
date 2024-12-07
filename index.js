@@ -47,7 +47,42 @@ async function run() {
       res.send(result);
     });
 
-    //Update a specific equipment
+    //sorted
+    app.get("/sortedequipments", async (req, res) => {
+      const cursor = equipmentCollection.find().sort({ price: -1 });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    //PUT method
+    app.put("/equipments/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedEquipment = req.body;
+      const equipment = {
+        $set: {
+          photo: updatedEquipment.photo,
+          itemName: updatedEquipment.itemName,
+          category: updatedEquipment.category,
+          description: updatedEquipment.description,
+          price: updatedEquipment.price,
+          rating: updatedEquipment.rating,
+          customization: updatedEquipment.customization,
+          processing: updatedEquipment.processing,
+          quantity: updatedEquipment.quantity,
+        },
+      };
+
+      const result = await equipmentCollection.updateOne(
+        filter,
+        equipment,
+        options
+      );
+      res.send(result);
+    });
+
     app.get("/equipments/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -61,10 +96,12 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await equipmentCollection.deleteOne(query);
       res.send(result);
+
+      console.log(id);
     });
 
     //Only 6 data
-    app.get("/equipments/limited", async (req, res) => {
+    app.get("/equipmentslimited", async (req, res) => {
       const equipmentCollection = client
         .db("sportflexDB")
         .collection("equipments");
@@ -91,6 +128,7 @@ async function run() {
       };
 
       const result = await userCollection.updateOne(filter, updatedDoc);
+      res.send(result);
     });
 
     console.log(
