@@ -98,7 +98,7 @@ async function run() {
       const equipmentCollection = client
         .db("sportflexDB")
         .collection("equipments");
-      const limitedData = await equipmentCollection.find({}).limit(6).toArray();
+      const limitedData = await equipmentCollection.find({}).limit(8).toArray();
       res.send(limitedData);
     });
 
